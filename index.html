@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For Laiba</title>
+<style>
+  :root{
+    --black:#0a0708;
+    --burgundy:#3d0f1a;
+    --burgundy-deep:#2a0a12;
+    --navy:#0d1b2e;
+    --gold:#d4af6a;
+    --gold-soft:#e8cf9a;
+    --pink:#e3a8b5;
+    --white:#f5ede4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    width:100%;
+    background:var(--black);
+    color:var(--white);
+    font-family:'Georgia','Iowan Old Style',serif;
+    overflow-x:hidden;
+  }
+  body{
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(61,15,26,0.55), transparent 55%),
+      radial-gradient(ellipse at 80% 90%, rgba(13,27,46,0.55), transparent 55%),
+      var(--black);
+    min-height:100vh;
+  }
+  .screen{
+    min-height:100vh;
+    width:100%;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:8vh 6vw;
+    position:relative;
+  }
+  .screen.active{display:flex;}
+
+  /* floating particles */
+  .particles{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
+  .particle{
+    position:absolute;
+    bottom:-10%;
+    font-size:14px;
+    opacity:0;
+    animation:floatUp linear infinite;
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}
+    10%{opacity:0.5;}
+    90%{opacity:0.35;}
+    100%{transform:translateY(-110vh) translateX(20px) rotate(180deg);opacity:0;}
+  }
+
+  /* ---------- PIN SCREEN ---------- */
+  #pin-screen{
+    text-align:center;
+    z-index:2;
+  }
+  .pin-title{
+    font-size:1.4rem;
+    letter-spacing:0.5px;
+    color:var(--gold-soft);
+    margin-bottom:2.5rem;
+    font-weight:400;
+    opacity:0;
+    animation:fadeIn 1.4s ease forwards;
+  }
+  .pin-input-wrap{
+    display:flex;
+    gap:14px;
+    margin-bottom:1.8rem;
+    opacity:0;
+    animation:fadeIn 1.4s ease 0.3s forwards;
+  }
+  .pin-digit{
+    width:48px;
+    height:58px;
+    text-align:center;
+    font-size:1.6rem;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(212,175,106,0.35);
+    border-radius:10px;
+    color:var(--white);
+    outline:none;
+    transition:border-color 0.3s, box-shadow 0.3s;
+    font-family:inherit;
+  }
+  .pin-digit:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 14px rgba(212,175,106,0.35);
+  }
+  .pin-btn{
+    background:linear-gradient(135deg, var(--burgundy), var(--burgundy-deep));
+    border:1px solid rgba(212,175,106,0.4);
+    color:var(--gold-soft);
+    padding:0.85rem 2.4rem;
+    border-radius:30px;
+    font-size:1rem;
+    letter-spacing:0.5px;
+    cursor:pointer;
+    transition:transform 0.25s, box-shadow 0.25s;
+    opacity:0;
+    animation:fadeIn 1.4s ease 0.5s forwards;
+    font-family:inherit;
+  }
+  .pin-btn:active{transform:scale(0.96);}
+  .pin-btn:hover{box-shadow:0 0 20px rgba(212,175,106,0.3);}
+  .pin-error{
+    margin-top:1.2rem;
+    color:var(--pink);
+    font-size:0.9rem;
+    min-height:1.2rem;
+    opacity:0;
+    transition:opacity 0.3s;
+  }
+  .pin-error.show{opacity:1;}
+
+  @keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  /* ---------- LETTER SECTION ---------- */
+  #letter-screen{
+    align-items:center;
+    text-align:center;
+    z-index:2;
+    padding-top:10vh;
+    padding-bottom:6vh;
+  }
+  .heading{
+    font-size:2.1rem;
+    color:var(--gold-soft);
+    margin-bottom:2.2rem;
+    font-weight:400;
+    letter-spacing:0.5px;
+    opacity:0;
+    animation:fadeIn 1.2s ease forwards;
+  }
+  .letter-body{
+    max-width:640px;
+    text-align:left;
+  }
+  .letter-para{
+    font-size:1.03rem;
+    line-height:1.85;
+    color:var(--white);
+    margin-bottom:1.4rem;
+    opacity:0;
+    transform:translateY(14px);
+    animation:paraIn 1s ease forwards;
+  }
+  @keyframes paraIn{
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .reply-card{
+    max-width:600px;
+    margin-top:3.5rem;
+    background:linear-gradient(160deg, rgba(61,15,26,0.55), rgba(10,7,8,0.75));
+    border:1px solid rgba(212,175,106,0.3);
+    border-radius:18px;
+    padding:2rem 1.8rem;
+    text-align:left;
+    opacity:0;
+    animation:fadeIn 1.3s ease forwards;
+    box-shadow:0 0 30px rgba(61,15,26,0.35);
+  }
+  .reply-label{
+    font-size:0.8rem;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:0.9rem;
+  }
+  .reply-text{
+    font-size:1.05rem;
+    line-height:1.75;
+    color:var(--gold-soft);
+  }
+
+  .continue-btn{
+    margin-top:3rem;
+    background:transparent;
+    border:1px solid rgba(212,175,106,0.5);
+    color:var(--gold-soft);
+    padding:0.75rem 2.2rem;
+    border-radius:30px;
+    font-size:0.95rem;
+    cursor:pointer;
+    opacity:0;
+    animation:fadeIn 1.2s ease forwards;
+    font-family:inherit;
+    transition:box-shadow 0.3s, transform 0.25s;
+  }
+  .continue-btn:hover{box-shadow:0 0 18px rgba(212,175,106,0.3);}
+  .continue-btn:active{transform:scale(0.96);}
+
+  /* ---------- QUESTION SCREEN ---------- */
+  #question-screen{
+    text-align:center;
+    z-index:2;
+  }
+  .q-pretext{
+    font-size:1.1rem;
+    color:var(--pink);
+    margin-bottom:0.8rem;
+    opacity:0;
+    animation:fadeIn 1.2s ease forwards;
+  }
+  .q-main{
+    font-size:1.9rem;
+    color:var(--gold-soft);
+    margin-bottom:3rem;
+    font-weight:400;
+    opacity:0;
+    animation:fadeIn 1.2s ease 0.4s forwards;
+  }
+  .q-buttons{
+    display:flex;
+    gap:22px;
+    position:relative;
+    min-height:70px;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    opacity:0;
+    animation:fadeIn 1.2s ease 0.8s forwards;
+  }
+  #yes-btn{
+    background:linear-gradient(135deg, var(--burgundy), #5a1424);
+    border:1px solid var(--gold);
+    color:var(--gold-soft);
+    padding:0.9rem 2.4rem;
+    border-radius:32px;
+    font-size:1.05rem;
+    cursor:pointer;
+    box-shadow:0 0 22px rgba(212,175,106,0.25);
+    transition:transform 0.3s, box-shadow 0.3s, padding 0.3s;
+    font-family:inherit;
+  }
+  #yes-btn:hover{box-shadow:0 0 32px rgba(212,175,106,0.45);transform:scale(1.04);}
+  #yes-btn:active{transform:scale(0.96);}
+  #no-btn{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(227,168,181,0.5);
+    color:var(--pink);
+    padding:0.9rem 2rem;
+    border-radius:32px;
+    font-size:1rem;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.3s;
+    font-family:inherit;
+    position:relative;
+  }
+  #no-btn:active{transform:scale(0.96);}
+  .no-msg{
+    margin-top:1.6rem;
+    font-size:0.95rem;
+    color:var(--pink);
+    min-height:1.4rem;
+    opacity:0;
+    transition:opacity 0.35s;
+  }
+  .no-msg.show{opacity:1;}
+
+  /* ---------- TRANSITION / CELEBRATION ---------- */
+  #celebrate-screen{
+    text-align:center;
+    z-index:2;
+  }
+  .celebrate-line{
+    font-size:1.8rem;
+    color:var(--gold-soft);
+    margin-bottom:1rem;
+    opacity:0;
+    font-weight:400;
+  }
+  .celebrate-line.show{animation:fadeIn 1.3s ease forwards;}
+
+  #fireworks-canvas{
+    position:fixed;
+    inset:0;
+    z-index:5;
+    pointer-events:none;
+  }
+
+  .music-btn{
+    position:fixed;
+    bottom:22px;
+    right:22px;
+    z-index:20;
+    background:rgba(10,7,8,0.7);
+    border:1px solid rgba(212,175,106,0.4);
+    color:var(--gold-soft);
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    font-size:1.2rem;
+    cursor:pointer;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(6px);
+  }
+
+  /* ---------- PHOTOS ---------- */
+  #photos-screen{
+    text-align:center;
+    z-index:2;
+    padding-top:8vh;
+  }
+  .photo-wrap{
+    max-width:420px;
+    width:100%;
+    margin:0 auto 2.6rem auto;
+    opacity:0;
+    transform:translateY(20px) scale(0.97);
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid rgba(212,175,106,0.35);
+    box-shadow:0 0 30px rgba(61,15,26,0.4), 0 0 60px rgba(212,175,106,0.08);
+    transition:opacity 1.2s ease, transform 1.2s ease;
+    background:rgba(255,255,255,0.02);
+  }
+  .photo-wrap.show{opacity:1;transform:translateY(0) scale(1);}
+  .photo-wrap img{
+    width:100%;
+    max-height:70vh;
+    object-fit:contain;
+    display:block;
+    background:#050404;
+  }
+
+  /* ---------- FINAL SCREEN ---------- */
+  #final-screen{
+    text-align:center;
+    z-index:2;
+  }
+  .final-title{
+    font-size:1.9rem;
+    color:var(--gold-soft);
+    margin-bottom:0.6rem;
+    opacity:0;
+    animation:fadeIn 1.3s ease forwards;
+  }
+  .final-date{
+    font-size:1.2rem;
+    color:var(--pink);
+    margin-bottom:2.2rem;
+    opacity:0;
+    animation:fadeIn 1.3s ease 0.3s forwards;
+  }
+  .final-body{
+    max-width:520px;
+    font-size:1.02rem;
+    line-height:1.9;
+    color:var(--white);
+    margin-bottom:2.2rem;
+    opacity:0;
+    animation:fadeIn 1.3s ease 0.6s forwards;
+  }
+  .final-signoff{
+    font-size:1.15rem;
+    color:var(--gold);
+    margin-bottom:1.2rem;
+    opacity:0;
+    animation:fadeIn 1.3s ease 0.9s forwards;
+  }
+  .final-emojis{
+    font-size:1.3rem;
+    letter-spacing:8px;
+    opacity:0;
+    animation:fadeIn 1.3s ease 1.2s forwards;
+  }
+
+  @media (max-width:420px){
+    .pin-digit{width:42px;height:52px;font-size:1.4rem;}
+    .heading{font-size:1.7rem;}
+    .q-main{font-size:1.5rem;}
+    #yes-btn,#no-btn{padding:0.8rem 1.6rem;font-size:0.95rem;}
+    .final-title{font-size:1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<!-- PIN SCREEN -->
+<div class="screen active" id="pin-screen">
+  <div class="pin-title">Something I wrote for you… 🖤</div>
+  <div class="pin-input-wrap">
+    <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="d0">
+    <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="d1">
+    <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="d2">
+    <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" id="d3">
+  </div>
+  <button class="pin-btn" id="open-btn">Open 💗</button>
+  <div class="pin-error" id="pin-error">that's not it… try again 🎀</div>
+</div>
+
+<!-- LETTER SCREEN -->
+<div class="screen" id="letter-screen">
+  <div class="heading">The Boy You Wanted</div>
+  <div class="letter-body" id="letter-body"></div>
+
+  <div class="reply-card">
+    <div class="reply-label">My Reply</div>
+    <div class="reply-text">I don’t know if i do check all the boxes but i know one thing for sure that i will become whatever you want me to be .. Iloveyou&lt;3</div>
+  </div>
+
+  <button class="continue-btn" id="continue-btn" style="animation-delay:0.3s;">Continue 🖤</button>
+</div>
+
+<!-- QUESTION SCREEN -->
+<div class="screen" id="question-screen">
+  <div class="q-pretext">I just wanna ask you something… 🥹</div>
+  <div class="q-main">Will you be my girlfriend? 💗</div>
+  <div class="q-buttons">
+    <button id="yes-btn">YES 🖤</button>
+    <button id="no-btn">NO 🎀</button>
+  </div>
+  <div class="no-msg" id="no-msg"></div>
+</div>
+
+<!-- CELEBRATE SCREEN -->
+<div class="screen" id="celebrate-screen">
+  <div class="celebrate-line" id="cel-line1">Good choice 🖤</div>
+  <div class="celebrate-line" id="cel-line2">I knew you would say yes eventually 😭💗</div>
+</div>
+
+<!-- PHOTOS SCREEN -->
+<div class="screen" id="photos-screen">
+  <div class="heading" style="margin-bottom:2.5rem;">Us 🖤</div>
+  <div class="photo-wrap"><img src="photo1.jpg" alt=""></div>
+  <div class="photo-wrap"><img src="photo2.jpg" alt=""></div>
+  <div class="photo-wrap"><img src="photo3.jpg" alt=""></div>
+  <div class="photo-wrap"><img src="photo4.jpg" alt=""></div>
+  <div class="photo-wrap"><img src="photo5.jpg" alt=""></div>
+</div>
+
+<!-- FINAL SCREEN -->
+<div class="screen" id="final-screen">
+  <div class="final-title">Happy Girlfriend’s Day, Laiba 🖤</div>
+  <div class="final-date">1 August 🎀</div>
+  <div class="final-body">
+    Maybe this little page is not much compared to everything I want to give you someday, but I wanted you to have something that exists just for you.
+    <br><br>
+    Thank you for being you.
+    <br><br>
+    I love you. 💗
+  </div>
+  <div class="final-signoff">Always yours 🖤</div>
+  <div class="final-emojis">💗 🎀 💋 🥹 🖤</div>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+<audio id="bg-music" src="music.mp3" loop></audio>
+<button class="music-btn" id="music-btn">🔊</button>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- floating particles ---------- */
+  const particleEmojis = ['🖤','💗','🎀'];
+  const particlesWrap = document.getElementById('particles');
+  for(let i=0;i<14;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.textContent = particleEmojis[Math.floor(Math.random()*particleEmojis.length)];
+    p.style.left = Math.random()*100+'%';
+    p.style.fontSize = (10+Math.random()*10)+'px';
+    p.style.animationDuration = (14+Math.random()*10)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    particlesWrap.appendChild(p);
+  }
+
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- PIN LOGIC ---------- */
+  const CORRECT_PIN = "0110";
+  const digits = [document.getElementById('d0'),document.getElementById('d1'),document.getElementById('d2'),document.getElementById('d3')];
+  const errorEl = document.getElementById('pin-error');
+
+  digits.forEach((el,idx)=>{
+    el.addEventListener('input', ()=>{
+      el.value = el.value.replace(/[^0-9]/g,'');
+      if(el.value && idx < digits.length-1){
+        digits[idx+1].focus();
+      }
+    });
+    el.addEventListener('keydown', (e)=>{
+      if(e.key === 'Backspace' && !el.value && idx>0){
+        digits[idx-1].focus();
+      }
+      if(e.key === 'Enter'){
+        tryOpen();
+      }
+    });
+  });
+
+  function tryOpen(){
+    const entered = digits.map(d=>d.value).join('');
+    if(entered === CORRECT_PIN){
+      errorEl.classList.remove('show');
+      startLetter();
+    } else {
+      errorEl.classList.add('show');
+      digits.forEach(d=>d.value='');
+      digits[0].focus();
+      const wrap = document.querySelector('.pin-input-wrap');
+      wrap.style.animation = 'none';
+      requestAnimationFrame(()=>{
+        wrap.animate([
+          {transform:'translateX(0)'},
+          {transform:'translateX(-8px)'},
+          {transform:'translateX(8px)'},
+          {transform:'translateX(-6px)'},
+          {transform:'translateX(6px)'},
+          {transform:'translateX(0)'}
+        ], {duration:400});
+      });
+    }
+  }
+  document.getElementById('open-btn').addEventListener('click', tryOpen);
+
+  /* ---------- LETTER CONTENT ---------- */
+  const letterParas = [
+"fall in love with the boy who stays up all night to talk to you. fall in love with the boy who calls you beautiful, not hot. fall in love with the boy who holds your hand when you’re nervous. fall in love with the boy who isn’t on 50 other girls best friends list.",
+"fall in love with the boy who watches your favorite movie even if he hates it. fall in love with the boy who walks you to the door and texts you when he gets home. fall in love with the boy who doesn’t like you for your body or face.",
+"fall in love with the boy who wants to have a future with you. fall in love with the boy who supports you fully. fall in love with a boy who takes care of your expenses.",
+"fall in love with the boy who wants to have tickle fights instead of arguments. fall in love with the boy who will walk your kids home from the bus stop. fall in love with the boy who will dance with you in the car to country music.",
+"fall in love with the boy who asks you how you are and checks up on you. fall in love with the boy who likes you without makeup on. fall in love with the boy who would do anything to see you.",
+"fall in love with the boy who sends you good morning and goodnight texts. fall in love with the boy who wants to see you happy and smiling. fall in love with the boy who cuddles you when you’re cold.",
+"fall in love with the boy who is willing to take a saturday for you. fall in love with a boy who spoils you very much. fall in love with the boy who calls you \"babygirl\" and \"my girl\".",
+"fall in love with the boy who doesn’t act different with you around his friends. fall in love with a boy who never argues or catches a mood over money. fall in love with the boy who falls asleep with you and doesn’t move until you wake up.",
+"fall in love with a boy who takes care of your needs and wishes before u even name them. fall in love with a boy who fulfil your wishes and needs without hesitation or question. fall in love with a boy who dates to marry.",
+"fall in love with the boy who doesn’t blame you for his issues. fall in love with the boy who screenshots pics of you smiling. fall in love with the boy who shows you off to everyone.",
+"fall in love with the boy who's mom loves you just as much as he does. fall in love with someone who makes you happy."
+  ];
+
+  let letterBuilt = false;
+  function startLetter(){
+    showScreen('letter-screen');
+    if(letterBuilt) return;
+    letterBuilt = true;
+    const container = document.getElementById('letter-body');
+    letterParas.forEach((text, i)=>{
+      const p = document.createElement('p');
+      p.className = 'letter-para';
+      p.textContent = text;
+      p.style.animationDelay = (0.15*i)+'s';
+      container.appendChild(p);
+    });
+  }
+
+  document.getElementById('continue-btn').addEventListener('click', ()=>{
+    showScreen('question-screen');
+  });
+
+  /* ---------- NO BUTTON SYSTEM ---------- */
+  const noMessages = [
+    "Are you sure? 🥹",
+    "Think again 🖤",
+    "Really Laiba? 😭",
+    "Nice try 🎀",
+    "That cannot be your final answer 💗",
+    "One more chance 🥹",
+    "You know which button you are supposed to press 🖤",
+    "Try again 😭",
+    "Still NO? 💀",
+    "I am patiently waiting… 🎀",
+    "Maybe YES this time? 💋",
+    "Hmm, wrong button 🖤",
+    "That was definitely a misclick 🥹",
+    "C'mon 😭🎀",
+    "I'll just keep asking 💗",
+    "Okay but why though 🖤",
+    "Not buying it 🎀",
+    "Wow, tough crowd 😭",
+    "Rethink that answer 💋",
+    "The YES button is right there 🥹",
+  ];
+  const NO_MAX_DODGE = noMessages.length; // dodges only for the length of the message list
+  const noBtn = document.getElementById('no-btn');
+  const yesBtn = document.getElementById('yes-btn');
+  const noMsgEl = document.getElementById('no-msg');
+  const qButtons = document.querySelector('.q-buttons');
+  let noClicks = 0;
+
+  noBtn.addEventListener('click', ()=>{
+    noMsgEl.textContent = noMessages[noClicks % noMessages.length];
+    noMsgEl.classList.remove('show');
+    void noMsgEl.offsetWidth;
+    noMsgEl.classList.add('show');
+
+    // dodge for the first NO_MAX_DODGE clicks, then settle in place
+    if(noClicks < NO_MAX_DODGE){
+      const wrapRect = qButtons.getBoundingClientRect();
+      const btnW = noBtn.offsetWidth;
+      const btnH = noBtn.offsetHeight;
+      const maxX = Math.max(0, wrapRect.width - btnW);
+      const maxY = 60;
+      const randX = (Math.random()*maxX) - (maxX/2);
+      const randY = (Math.random()*maxY) - (maxY/2);
+      noBtn.style.position = 'relative';
+      noBtn.style.transition = 'transform 0.35s ease';
+      noBtn.style.transform = `translate(${randX}px, ${randY}px)`;
+    } else {
+      noBtn.style.transform = 'translate(0,0)';
+    }
+
+    noClicks++;
+  });
+
+  yesBtn.addEventListener('click', ()=>{
+    showScreen('celebrate-screen');
+    document.getElementById('cel-line1').classList.add('show');
+    setTimeout(()=>{
+      document.getElementById('cel-line2').classList.add('show');
+    }, 1200);
+
+    startMusic();
+    startFireworks();
+
+    setTimeout(()=>{
+      showScreen('photos-screen');
+      revealPhotos();
+    }, 4200);
+  });
+
+  /* ---------- MUSIC ---------- */
+  const music = document.getElementById('bg-music');
+  const musicBtn = document.getElementById('music-btn');
+  let musicPlaying = false;
+
+  function startMusic(){
+    musicBtn.style.display = 'flex';
+    music.volume = 0.6;
+    music.play().then(()=>{
+      musicPlaying = true;
+      musicBtn.textContent = '🔊';
+    }).catch(()=>{
+      musicPlaying = false;
+      musicBtn.textContent = '🔈';
+    });
+  }
+
+  musicBtn.addEventListener('click', ()=>{
+    if(musicPlaying){
+      music.pause();
+      musicPlaying = false;
+      musicBtn.textContent = '🔈';
+    } else {
+      music.play().then(()=>{
+        musicPlaying = true;
+        musicBtn.textContent = '🔊';
+      }).catch(()=>{});
+    }
+  });
+
+  /* ---------- FIREWORKS ---------- */
+  const canvas = document.getElementById('fireworks-canvas');
+  const ctx = canvas.getContext('2d');
+  let fwParticles = [];
+  let fwRunning = false;
+  let fwAnimId = null;
+  let fwEmojiFloats = [];
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const fwColors = ['#0a0708','#0d1b2e','#d4af6a','#e3a8b5','#f5ede4'];
+  const fwEmojis = ['🖤','💗','🎀','💋','🥹'];
+
+  function spawnBurst(x,y){
+    const count = 34;
+    for(let i=0;i<count;i++){
+      const angle = (Math.PI*2*i)/count + Math.random()*0.2;
+      const speed = 1.6 + Math.random()*3.2;
+      fwParticles.push({
+        x,y,
+        vx: Math.cos(angle)*speed,
+        vy: Math.sin(angle)*speed,
+        life: 1,
+        decay: 0.012 + Math.random()*0.012,
+        color: fwColors[Math.floor(Math.random()*fwColors.length)],
+        size: 1.5 + Math.random()*2
+      });
+    }
+  }
+
+  function spawnEmoji(){
+    fwEmojiFloats.push({
+      x: Math.random()*canvas.width,
+      y: canvas.height + 20,
+      vy: -(0.6+Math.random()*0.8),
+      char: fwEmojis[Math.floor(Math.random()*fwEmojis.length)],
+      life: 1,
+      size: 16+Math.random()*10
+    });
+  }
+
+  function fwTick(){
+    ctx.fillStyle = 'rgba(10,7,8,0.18)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    fwParticles.forEach(p=>{
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.02;
+      p.life -= p.decay;
+      ctx.globalAlpha = Math.max(p.life,0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      ctx.fill();
+    });
+    fwParticles = fwParticles.filter(p=>p.life>0);
+
+    ctx.globalAlpha = 1;
+    fwEmojiFloats.forEach(e=>{
+      e.y += e.vy;
+      e.life -= 0.006;
+      ctx.globalAlpha = Math.max(Math.min(e.life,0.6),0);
+      ctx.font = e.size+'px sans-serif';
+      ctx.fillText(e.char, e.x, e.y);
+    });
+    fwEmojiFloats = fwEmojiFloats.filter(e=>e.life>0);
+    ctx.globalAlpha = 1;
+
+    if(fwRunning || fwParticles.length>0 || fwEmojiFloats.length>0){
+      fwAnimId = requestAnimationFrame(fwTick);
+    } else {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+  }
+
+  function startFireworks(){
+    fwRunning = true;
+    fwTick();
+    let bursts = 0;
+    const burstInterval = setInterval(()=>{
+      const x = canvas.width*(0.2+Math.random()*0.6);
+      const y = canvas.height*(0.2+Math.random()*0.45);
+      spawnBurst(x,y);
+      if(Math.random()<0.6) spawnEmoji();
+      bursts++;
+      if(bursts>=9){
+        clearInterval(burstInterval);
+        setTimeout(()=>{ fwRunning = false; }, 1800);
+      }
+    }, 420);
+  }
+
+  /* ---------- PHOTO REVEAL ---------- */
+  function revealPhotos(){
+    const wraps = document.querySelectorAll('.photo-wrap');
+    wraps.forEach((w,i)=>{
+      setTimeout(()=>{
+        w.classList.add('show');
+      }, 700*i);
+    });
+    const totalDelay = 700*wraps.length + 1200;
+    setTimeout(()=>{
+      showScreen('final-screen');
+    }, totalDelay);
+  }
+
+})();
+</script>
+</body>
+</html>
