@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hadi &amp; Laiba 🖤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Quicksand:wght@400;500;600;700&family=Meddon&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fffaf6;
+    --blush:#ffeaf1;
+    --pink:#ffc4d7;
+    --rose:#f1a0bb;
+    --deep-red:#b9273f;
+    --maroon:#5c1220;
+    --gold:#d8b26a;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--cream);
+    font-family:'Quicksand',sans-serif;
+    color:var(--maroon);
+  }
+
+  h1,h2,h3,.serif{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    margin:0;
+  }
+
+  .script{
+    font-family:'Meddon', cursive;
+    font-weight:400;
+  }
+
+  button{
+    font-family:'Quicksand',sans-serif;
+    cursor:pointer;
+    border:none;
+    outline:none;
+  }
+
+  ::selection{ background:var(--pink); color:var(--maroon); }
+
+  /* ---------- floating background text ---------- */
+  .float-layer{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .float-word{
+    position:absolute;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    color:var(--deep-red);
+    opacity:0.09;
+    filter:blur(1px);
+    white-space:nowrap;
+    animation:driftUp linear infinite;
+    user-select:none;
+  }
+  @keyframes driftUp{
+    0%{ transform:translateY(6vh) translateX(0) rotate(-2deg); }
+    50%{ transform:translateY(-46vh) translateX(2vw) rotate(2deg); }
+    100%{ transform:translateY(-100vh) translateX(-1vw) rotate(-1deg); }
+  }
+
+  /* ---------- stage / scenes ---------- */
+  .stage{
+    position:relative;
+    width:100vw;
+    height:100vh;
+    height:100dvh;
+    z-index:1;
+  }
+
+  .scene{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8vh 6vw;
+    opacity:0;
+    visibility:hidden;
+    transform:scale(0.94);
+    filter:blur(10px);
+    transition:opacity 0.9s ease, transform 0.9s ease, filter 0.9s ease, visibility 0.9s;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 50% 20%, var(--blush) 0%, var(--cream) 70%);
+    overflow:hidden;
+  }
+  .scene.active{
+    opacity:1;
+    visibility:visible;
+    transform:scale(1);
+    filter:blur(0);
+    pointer-events:auto;
+  }
+
+  .scene-content{
+    position:relative;
+    z-index:3;
+    max-width:560px;
+    width:100%;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    max-height:100%;
+  }
+
+  .eyebrow{
+    font-size:0.72rem;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--rose);
+    font-weight:600;
+  }
+
+  .btn{
+    padding:14px 30px;
+    border-radius:999px;
+    background:linear-gradient(135deg, var(--deep-red), var(--maroon));
+    color:var(--cream);
+    font-size:1rem;
+    font-weight:600;
+    letter-spacing:0.01em;
+    box-shadow:0 10px 24px -8px rgba(92,18,32,0.55);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .btn:active{ transform:scale(0.96); }
+  .btn:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -8px rgba(92,18,32,0.6); }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--maroon);
+    border:1.5px solid var(--rose);
+    box-shadow:none;
+  }
+  .btn-ghost:hover{ background:rgba(241,160,187,0.12); }
+
+  .divider{
+    width:46px;
+    height:2px;
+    background:var(--gold);
+    border-radius:2px;
+    opacity:0.7;
+  }
+
+  /* ---------- Scene 1: PIN ---------- */
+  #scene1 .lock-icon{ font-size:2.4rem; }
+  #scene1 h1{ font-size:1.7rem; color:var(--maroon); line-height:1.4; }
+  #scene1 p{ font-size:0.95rem; color:var(--rose); margin:0; }
+
+  .pin-wrap{
+    display:flex;
+    gap:12px;
+    margin-top:6px;
+  }
+  .pin-input{
+    width:44px;
+    height:56px;
+    border-radius:14px;
+    border:1.5px solid var(--pink);
+    background:#fff;
+    text-align:center;
+    font-size:1.5rem;
+    font-family:'Cormorant Garamond', serif;
+    color:var(--maroon);
+    outline:none;
+    transition:border-color 0.2s ease, transform 0.2s ease;
+  }
+  .pin-input:focus{ border-color:var(--deep-red); transform:translateY(-2px); }
+  .pin-wrap.shake{ animation:shake 0.45s ease; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-6px); }
+    80%{ transform:translateX(6px); }
+  }
+  .pin-error{
+    min-height:20px;
+    font-size:0.88rem;
+    color:var(--deep-red);
+    font-weight:600;
+  }
+
+  /* ---------- Scene 2: letter ---------- */
+  #scene2 .scene-content{ max-width:600px; }
+  #scene2 h2{ font-size:1.9rem; }
+  .letter-scroll{
+    width:100%;
+    max-height:52vh;
+    overflow-y:auto;
+    padding:18px 16px;
+    background:rgba(255,255,255,0.55);
+    border:1px solid rgba(241,160,187,0.5);
+    border-radius:18px;
+    text-align:left;
+    line-height:1.85;
+    font-size:0.96rem;
+    color:var(--maroon);
+  }
+  .letter-scroll::-webkit-scrollbar{ width:5px; }
+  .letter-scroll::-webkit-scrollbar-thumb{ background:var(--pink); border-radius:6px; }
+  .letter-scroll p{ margin:0 0 14px 0; }
+  .letter-scroll p:last-child{ margin-bottom:0; }
+
+  /* ---------- Scene 3: reply ---------- */
+  #scene3 .reply-text{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.5rem;
+    line-height:1.55;
+    color:var(--maroon);
+  }
+  #scene3 .reply-sub{
+    font-size:0.95rem;
+    color:var(--rose);
+  }
+
+  /* ---------- Scene 4: question ---------- */
+  #scene4 h2{ font-size:1.6rem; }
+  #scene4 .big-question{
+    font-size:2rem;
+    color:var(--deep-red);
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+  }
+  #scene4.active .big-question{ opacity:1; transform:translateY(0); }
+
+  .q-buttons-zone{
+    position:relative;
+    width:100%;
+    max-width:400px;
+    height:190px;
+    margin-top:6px;
+  }
+  #yesBtn{
+    position:absolute;
+    left:50%;
+    top:20px;
+    transform:translateX(-130%);
+    font-size:1.05rem;
+    padding:16px 34px;
+    animation:pulseYes 2.2s ease-in-out infinite;
+  }
+  @keyframes pulseYes{
+    0%,100%{ box-shadow:0 10px 24px -8px rgba(92,18,32,0.55); }
+    50%{ box-shadow:0 10px 30px -4px rgba(185,39,63,0.65); }
+  }
+  #noBtn{
+    position:absolute;
+    left:50%;
+    top:20px;
+    transform:translateX(30%);
+    background:#fff;
+    color:var(--maroon);
+    border:1.5px solid var(--pink);
+    padding:16px 24px;
+    border-radius:999px;
+    font-size:0.95rem;
+    transition:left 0.35s ease, top 0.35s ease, transform 0.2s ease;
+    white-space:nowrap;
+  }
+  .tease-msg{
+    min-height:20px;
+    font-size:0.85rem;
+    color:var(--rose);
+    margin-top:8px;
+  }
+
+  /* ---------- Scene 5: yes ---------- */
+  #scene5 h1{ font-size:2.1rem; color:var(--deep-red); }
+  #scene5 .sub{ font-size:1.05rem; color:var(--maroon); }
+  #scene5 .playful{ font-size:0.95rem; color:var(--rose); }
+  .date-badge{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    padding:14px 30px;
+    border:1.5px solid var(--gold);
+    border-radius:16px;
+    background:rgba(216,178,106,0.08);
+  }
+  .date-badge .date{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.7rem;
+    color:var(--maroon);
+    font-weight:600;
+  }
+  .date-badge .date-label{
+    font-size:0.78rem;
+    color:var(--rose);
+    letter-spacing:0.04em;
+  }
+
+  /* ---------- Scene 6: story ---------- */
+  #scene6 .story-line{ font-size:1.15rem; color:var(--maroon); }
+  #scene6 .story-line.italic{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:1.35rem; }
+
+  /* ---------- Scene 7: photos ---------- */
+  #scene7{ padding:6vh 4vw; }
+  #scene7 .scene-content{ max-width:520px; height:100%; justify-content:center; gap:14px; }
+  .photo-frame{
+    width:100%;
+    flex:1;
+    max-height:56vh;
+    border-radius:20px;
+    overflow:hidden;
+    background:rgba(255,255,255,0.5);
+    border:1px solid rgba(241,160,187,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  .photo-frame img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    opacity:1;
+    transition:opacity 0.5s ease;
+  }
+  .photo-frame img.fading{ opacity:0; }
+  .photo-caption{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.25rem;
+    color:var(--deep-red);
+    min-height:32px;
+    transition:opacity 0.4s ease;
+  }
+  .photo-nav{
+    display:flex;
+    gap:14px;
+    align-items:center;
+  }
+  .photo-dots{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+  }
+  .photo-dots span{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--pink);
+    opacity:0.5;
+  }
+  .photo-dots span.on{ opacity:1; background:var(--deep-red); }
+
+  /* ---------- Scene 8: ending ---------- */
+  #scene8 h1{ font-size:2rem; color:var(--deep-red); }
+  #scene8 p{ font-size:1rem; line-height:1.6; color:var(--maroon); margin:0; }
+  #scene8 .small{ font-size:0.85rem; color:var(--rose); }
+  #scene8 .signature{
+    font-family:'Meddon', cursive;
+    font-size:1.7rem;
+    color:var(--maroon);
+    margin-top:6px;
+  }
+
+  /* ---------- music toggle ---------- */
+  #musicToggle{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    z-index:20;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.85);
+    border:1px solid var(--pink);
+    box-shadow:0 6px 16px -6px rgba(92,18,32,0.4);
+    font-size:1.15rem;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity 0.6s ease, transform 0.2s ease;
+  }
+  #musicToggle.show{ display:flex; opacity:1; }
+  #musicToggle:active{ transform:scale(0.92); }
+  #musicToggle.paused{ opacity:0.55; }
+
+  /* ---------- fireworks canvas ---------- */
+  .fw-canvas{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+  }
+
+  /* ---------- floating emoji celebration ---------- */
+  .emoji-layer{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .celebrate-emoji{
+    position:absolute;
+    bottom:-40px;
+    font-size:1.4rem;
+    opacity:0.85;
+    animation:floatUpEmoji linear forwards;
+  }
+  @keyframes floatUpEmoji{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0.9; }
+    100%{ transform:translateY(-110vh) rotate(30deg); opacity:0; }
+  }
+
+  @media (max-width:380px){
+    #scene4 .big-question{ font-size:1.6rem; }
+    #scene5 h1{ font-size:1.7rem; }
+    #scene8 h1{ font-size:1.6rem; }
+    .pin-input{ width:38px; height:50px; font-size:1.25rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="float-layer" id="floatLayer"></div>
+
+<audio id="bgMusic" src="music.mp3" loop></audio>
+<button id="musicToggle" aria-label="toggle music">🎵</button>
+
+<div class="stage">
+
+  <!-- SCENE 1: PIN -->
+  <section class="scene active" id="scene1">
+    <div class="scene-content">
+      <div class="lock-icon">🎀</div>
+      <h1>Something is waiting for you, Laiba 🥹🎀</h1>
+      <p>Only you get to open this.</p>
+      <div class="pin-wrap" id="pinWrap">
+        <input class="pin-input" type="tel" inputmode="numeric" maxlength="1" id="p0">
+        <input class="pin-input" type="tel" inputmode="numeric" maxlength="1" id="p1">
+        <input class="pin-input" type="tel" inputmode="numeric" maxlength="1" id="p2">
+        <input class="pin-input" type="tel" inputmode="numeric" maxlength="1" id="p3">
+      </div>
+      <div class="pin-error" id="pinError"></div>
+      <button class="btn" id="openBtn">Open it 💗</button>
+    </div>
+  </section>
+
+  <!-- SCENE 2: THE BOY YOU WANTED -->
+  <section class="scene" id="scene2">
+    <div class="scene-content">
+      <span class="eyebrow">for Laiba</span>
+      <h2>The Boy You Wanted 💐</h2>
+      <div class="letter-scroll" id="letterScroll">
+        <p>fall in love with the boy who stays up all night to talk to you. fall in love with the boy who calls you beautiful, not hot. fall in love with the boy who holds your hand when you're nervous. fall in love with the boy who isn't on 50 other girls best friends list. fall in love with the boy who watches your favorite movie even if he hates it. fall in love with the boy who walks you to the door and texts you when he gets home. fall in love with the boy who doesn't like you for your body or face. fall in love with the boy who wants to have a future with you. fall in love with the boy who supports you fully. fall in love with a boy who takes care of your expenses. fall in love with the boy who wants to have tickle fights instead of arguments. fall in love with the boy who will walk your kids home from the bus stop. fall in love with the boy who will dance with you in the car to country music. fall in love with the boy who asks you how you are and checks up on you. fall in love with the boy who likes you without makeup on. fall in love with the boy who would do anything to see you. fall in love with the boy who sends you good morning and goodnight texts. fall in love with the boy who wants to see you happy and smiling. fall in love with the boy who cuddles you when you're cold.</p>
+        <p>fall in love with the boy who is willing to take a saturday for you. fall in love with a boy who spoils you very much. fall in love with the boy who calls you "babygirl" and "my girl". fall in love with the boy who doesn't act different with you around his friends. fall in love with a boy who never argues or catches a mood over money. fall in love with the boy who falls asleep with you and doesn't move until you wake up. fall in love with a boy who takes care of your needs and wishes before u even name them. fall in love with a boy who fulfil your wishes and needs without hesitation or question. fall in love with a boy who dates to marry. fall in love with the boy who doesn't blame you for his issues. fall in love with the boy who screenshots pics of you smiling. fall in love with the boy who shows you off to everyone. fall in love with the boy who's mom loves you just as much as he does. fall in love with someone who makes you happy.</p>
+      </div>
+      <button class="btn" id="toScene3">Okay Hadi… your turn 🫠💗</button>
+    </div>
+  </section>
+
+  <!-- SCENE 3: HADI'S REPLY -->
+  <section class="scene" id="scene3">
+    <div class="scene-content">
+      <div class="reply-text">"I don't know if i do check all the boxes but i know one thing for sure that i will become whatever you want me to be .. Iloveyou&lt;3"</div>
+      <div class="divider"></div>
+      <div class="reply-sub">okay… now I just wanna ask you something 🥹</div>
+      <button class="btn" id="toScene4">Ask me 💋</button>
+    </div>
+  </section>
+
+  <!-- SCENE 4: THE QUESTION -->
+  <section class="scene" id="scene4">
+    <div class="scene-content">
+      <h2>Okay Laiba…</h2>
+      <div class="big-question">Will you be my girlfriend? 💗</div>
+      <div class="q-buttons-zone" id="qZone">
+        <button class="btn" id="yesBtn">YES 🥹💗</button>
+        <button class="btn-ghost" id="noBtn">No 😭</button>
+      </div>
+      <div class="tease-msg" id="teaseMsg">&nbsp;</div>
+    </div>
+  </section>
+
+  <!-- SCENE 5: YES -->
+  <section class="scene" id="scene5">
+    <canvas class="fw-canvas" id="fwCanvas"></canvas>
+    <div class="emoji-layer" id="emojiLayer5"></div>
+    <div class="scene-content">
+      <h1>YOU SAID YES 😭💗</h1>
+      <p class="sub">Good choice, Laiba 🥹🖤</p>
+      <p class="playful">I knew you would eventually 😋</p>
+      <div class="date-badge">
+        <span class="date">16 August</span>
+        <span class="date-label">The day Hadi asked.</span>
+      </div>
+      <button class="btn" id="toScene6">Keep going 💐</button>
+    </div>
+  </section>
+
+  <!-- SCENE 6: THEIR STORY -->
+  <section class="scene" id="scene6">
+    <canvas class="fw-canvas" id="fwCanvas6"></canvas>
+    <div class="scene-content">
+      <p class="story-line">From 16 August…</p>
+      <p class="story-line">…to everything that came after.</p>
+      <p class="story-line italic">Somehow, Hadi asking one question turned into something worth celebrating.</p>
+      <div class="date-badge">
+        <span class="date">1 October 🖤</span>
+        <span class="date-label">Our anniversary.</span>
+      </div>
+      <button class="btn" id="toScene7">Now look at her 💗</button>
+    </div>
+  </section>
+
+  <!-- SCENE 7: PHOTOS -->
+  <section class="scene" id="scene7">
+    <div class="scene-content">
+      <span class="eyebrow">pretty Laiba</span>
+      <div class="photo-frame">
+        <img id="photoImg" src="photo1.jpg" alt="Laiba">
+      </div>
+      <div class="photo-caption" id="photoCaption">Pretty Laiba 💗</div>
+      <div class="photo-dots" id="photoDots"></div>
+      <div class="photo-nav">
+        <button class="btn-ghost" id="prevPhoto">Previous</button>
+        <button class="btn" id="nextPhoto">Next 💗</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 8: GIRLFRIEND'S DAY -->
+  <section class="scene" id="scene8">
+    <div class="scene-content">
+      <h1>Happy Girlfriend's Day, Laiba 🎀💗</h1>
+      <div class="divider"></div>
+      <span class="eyebrow">1 August</span>
+      <p>To my pretty Laiba 🥹</p>
+      <p>Maybe this little website is a little dramatic 😭 but you deserve something a little dramatic too.</p>
+      <p>Happy Girlfriend's Day to the girl who makes everything feel a little more special. 💐💗</p>
+      <p class="small">16 August will always be the day you got asked…</p>
+      <p class="small">1 October will always be our anniversary…</p>
+      <p>But today is just for celebrating you. 🖤</p>
+      <h2>Happy Girlfriend's Day, Laiba 💋🎀</h2>
+      <div class="signature">Hadi → Laiba 🖤</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+
+  /* ---------------- floating background words ---------------- */
+  const words = ["Laiba","my Laiba","pretty Laiba","Laiba 💗","my pretty girl","Laiba 🖤"];
+  const floatLayer = document.getElementById('floatLayer');
+  const wordCount = window.innerWidth < 500 ? 9 : 14;
+  for(let i=0;i<wordCount;i++){
+    const el = document.createElement('span');
+    el.className = 'float-word';
+    el.textContent = words[Math.floor(Math.random()*words.length)];
+    const size = (0.9 + Math.random()*1.3).toFixed(2);
+    el.style.fontSize = size + 'rem';
+    el.style.left = Math.random()*90 + 'vw';
+    el.style.top = (100 + Math.random()*20) + 'vh';
+    const duration = 16 + Math.random()*14;
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = (-Math.random()*duration) + 's';
+    floatLayer.appendChild(el);
+  }
+
+  /* ---------------- scene navigation ---------------- */
+  function goToScene(id){
+    document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  /* ---------------- SCENE 1: PIN ---------------- */
+  const pins = [document.getElementById('p0'),document.getElementById('p1'),document.getElementById('p2'),document.getElementById('p3')];
+  const pinWrap = document.getElementById('pinWrap');
+  const pinError = document.getElementById('pinError');
+  const CORRECT_PIN = '0110';
+
+  pins.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^0-9]/g,'').slice(0,1);
+      if(input.value && idx < pins.length - 1){
+        pins[idx+1].focus();
+      }
+    });
+    input.addEventListener('keydown', (e) => {
+      if(e.key === 'Backspace' && !input.value && idx > 0){
+        pins[idx-1].focus();
+      }
+      if(e.key === 'Enter'){ checkPin(); }
+    });
+  });
+
+  function checkPin(){
+    const entered = pins.map(p => p.value).join('');
+    if(entered.length < 4){
+      pinError.textContent = "Wrong one 😭 try again";
+      pinWrap.classList.remove('shake'); void pinWrap.offsetWidth; pinWrap.classList.add('shake');
+      return;
+    }
+    if(entered === CORRECT_PIN){
+      pinError.textContent = '';
+      goToScene('scene2');
+    } else {
+      pinError.textContent = "Wrong one 😭 try again";
+      pinWrap.classList.remove('shake'); void pinWrap.offsetWidth; pinWrap.classList.add('shake');
+      pins.forEach(p => p.value = '');
+      pins[0].focus();
+    }
+  }
+  document.getElementById('openBtn').addEventListener('click', checkPin);
+
+  /* ---------------- simple scene chaining ---------------- */
+  document.getElementById('toScene3').addEventListener('click', () => goToScene('scene3'));
+  document.getElementById('toScene4').addEventListener('click', () => goToScene('scene4'));
+  document.getElementById('toScene6').addEventListener('click', () => goToScene('scene6'));
+  document.getElementById('toScene7').addEventListener('click', () => goToScene('scene7'));
+
+  /* ---------------- SCENE 4: the question / NO button chaos ---------------- */
+  const noTexts = [
+    "No 😭","Are you sure? 😭","Really Laiba? 🥹","Think again 😭","Girl please 😭",
+    "HAADI IS CRYING NOW 😭","Not this button again 😭","Why are you like this 😭",
+    "Okay but… reconsider? 🥹","NO AGAIN?? 😭"
+  ];
+  const teaseTexts = [
+    "why are you still clicking no 😭",
+    "girl I made a whole website 😭",
+    "Hadi is staring at this screen like 🫠",
+    "this button is getting tired 😭",
+    "you really woke up and chose NO 😭",
+    "okay but the YES button is literally right there 🥹"
+  ];
+  let noIndex = 0;
+  let teaseIndex = 0;
+  const noBtn = document.getElementById('noBtn');
+  const qZone = document.getElementById('qZone');
+  const teaseMsg = document.getElementById('teaseMsg');
+
+  function moveNoButton(){
+    const zoneW = qZone.clientWidth;
+    const zoneH = qZone.clientHeight;
+    const btnW = noBtn.offsetWidth;
+    const btnH = noBtn.offsetHeight;
+    const maxX = Math.max(zoneW - btnW, 0);
+    const maxY = Math.max(zoneH - btnH, 0);
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    noBtn.style.transform = 'none';
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+  }
+
+  function teaseNo(){
+    noIndex = (noIndex + 1) % noTexts.length;
+    noBtn.textContent = noTexts[noIndex];
+    teaseIndex = (teaseIndex + 1) % teaseTexts.length;
+    teaseMsg.textContent = teaseTexts[teaseIndex];
+    moveNoButton();
+  }
+
+  noBtn.addEventListener('click', teaseNo);
+  noBtn.addEventListener('mouseenter', () => { if(window.matchMedia('(hover: hover)').matches){ moveNoButton(); } });
+  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); teaseNo(); }, {passive:false});
+
+  /* ---------------- YES: celebration ---------------- */
+  const bgMusic = document.getElementById('bgMusic');
+  const musicToggle = document.getElementById('musicToggle');
+  let musicStarted = false;
+
+  document.getElementById('yesBtn').addEventListener('click', () => {
+    goToScene('scene5');
+    startCelebration();
+  });
+
+  function startCelebration(){
+    if(!musicStarted){
+      musicStarted = true;
+      bgMusic.volume = 0.75;
+      bgMusic.play().catch(()=>{ /* autoplay blocked, user can use toggle */ });
+      musicToggle.classList.add('show');
+    }
+    spawnCelebrationEmojis('emojiLayer5');
+    startFireworks('fwCanvas');
+    startFireworks('fwCanvas6');
+  }
+
+  musicToggle.addEventListener('click', () => {
+    if(bgMusic.paused){
+      bgMusic.play().catch(()=>{});
+      musicToggle.classList.remove('paused');
+    } else {
+      bgMusic.pause();
+      musicToggle.classList.add('paused');
+    }
+  });
+
+  function spawnCelebrationEmojis(layerId){
+    const layer = document.getElementById(layerId);
+    if(!layer) return;
+    const emojis = ["💗","💕","🎀","💐","🖤","🥹"];
+    let count = 0;
+    const interval = setInterval(() => {
+      if(count > 26){ clearInterval(interval); return; }
+      count++;
+      const span = document.createElement('span');
+      span.className = 'celebrate-emoji';
+      span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      span.style.left = Math.random()*94 + '%';
+      span.style.animationDuration = (5 + Math.random()*4) + 's';
+      layer.appendChild(span);
+      setTimeout(() => span.remove(), 10000);
+    }, 260);
+  }
+
+  /* ---------------- fireworks canvas ---------------- */
+  const fwColors = ['#f1a0bb','#b9273f','#5c1220','#d8b26a','#fff9f5','#ffc4d7'];
+  function startFireworks(canvasId){
+    const canvas = document.getElementById(canvasId);
+    if(!canvas || canvas.dataset.running) return;
+    canvas.dataset.running = '1';
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let running = true;
+
+    function resize(){
+      canvas.width = canvas.clientWidth * devicePixelRatio;
+      canvas.height = canvas.clientHeight * devicePixelRatio;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function launchFirework(){
+      const x = (0.2 + Math.random()*0.6) * canvas.width;
+      const y = (0.2 + Math.random()*0.4) * canvas.height;
+      const color = fwColors[Math.floor(Math.random()*fwColors.length)];
+      const count = 26 + Math.floor(Math.random()*16);
+      for(let i=0;i<count;i++){
+        const angle = (Math.PI*2*i)/count;
+        const speed = (1.5 + Math.random()*2.5) * devicePixelRatio;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle)*speed,
+          vy: Math.sin(angle)*speed,
+          life: 60 + Math.random()*30,
+          age: 0,
+          color
+        });
+      }
+    }
+
+    function tick(){
+      if(!running) return;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.02 * devicePixelRatio;
+        p.age++;
+        const alpha = Math.max(0, 1 - p.age/p.life);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.2*devicePixelRatio, 0, Math.PI*2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      particles = particles.filter(p => p.age < p.life);
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    // initial burst
+    let bursts = 0;
+    const burstInterval = setInterval(() => {
+      launchFirework();
+      bursts++;
+      if(bursts >= 8){ clearInterval(burstInterval); }
+    }, 380);
+
+    // gentle ambient fireworks afterwards
+    setInterval(() => { launchFirework(); }, 3200);
+  }
+
+  /* ---------------- SCENE 7: photo viewer ---------------- */
+  const photos = [
+    { src:'photo1.jpg', caption:'Pretty Laiba 💗' },
+    { src:'photo2.jpg', caption:'How are you this pretty 😭🎀' },
+    { src:'photo3.jpg', caption:'My favorite girl 🥹💋' },
+    { src:'photo4.jpg', caption:'Actually unfair how pretty you are 🫠💗' },
+    { src:'photo5.jpg', caption:'Just look at my Laiba 🖤' }
+  ];
+  let photoIndex = 0;
+  const photoImg = document.getElementById('photoImg');
+  const photoCaption = document.getElementById('photoCaption');
+  const photoDots = document.getElementById('photoDots');
+  const prevPhotoBtn = document.getElementById('prevPhoto');
+  const nextPhotoBtn = document.getElementById('nextPhoto');
+
+  photos.forEach((_, i) => {
+    const dot = document.createElement('span');
+    if(i === 0) dot.classList.add('on');
+    photoDots.appendChild(dot);
+  });
+
+  function renderPhoto(){
+    photoImg.classList.add('fading');
+    photoCaption.style.opacity = 0;
+    setTimeout(() => {
+      photoImg.src = photos[photoIndex].src;
+      photoCaption.textContent = photos[photoIndex].caption;
+      photoImg.classList.remove('fading');
+      photoCaption.style.opacity = 1;
+      [...photoDots.children].forEach((d,i) => d.classList.toggle('on', i === photoIndex));
+      prevPhotoBtn.style.visibility = photoIndex === 0 ? 'hidden' : 'visible';
+      nextPhotoBtn.textContent = photoIndex === photos.length - 1 ? "Continue 💗" : "Next 💗";
+    }, 260);
+  }
+
+  prevPhotoBtn.addEventListener('click', () => {
+    if(photoIndex > 0){ photoIndex--; renderPhoto(); }
+  });
+  nextPhotoBtn.addEventListener('click', () => {
+    if(photoIndex < photos.length - 1){
+      photoIndex++;
+      renderPhoto();
+    } else {
+      goToScene('scene8');
+    }
+  });
+
+  renderPhoto();
+
+})();
+</script>
+</body>
+</html>
